@@ -25,14 +25,7 @@ public class TestEncryptUtil extends BaseTest {
     
     @Test
     public void encryptStreamTest() throws Exception {
-        try {
-            EncryptionUtil.getEncryptionCipher("");
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            // NOP
-        }
-        Cipher cipher = EncryptionUtil.getEncryptionCipher("OnceUponATime");
-        InputStream inputStream = new CipherInputStream(getSystemResourceAsStream(FILE_PDF), cipher);
+        InputStream inputStream = EncryptionUtil.encryptInputStream(getSystemResourceAsStream(FILE_PDF),"OnceUponATime" );
         byte[] encryptedData = ByteStreams.toByteArray(inputStream);
         byte[] assertData = ByteStreams.toByteArray(getSystemResourceAsStream(FILE_PDF_ENCRYPTED));
 

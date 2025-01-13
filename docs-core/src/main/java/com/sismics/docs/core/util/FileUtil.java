@@ -186,10 +186,9 @@ public class FileUtil {
         String fileId = fileDao.create(file, userId);
 
         // Save the file
-        Cipher cipher = EncryptionUtil.getEncryptionCipher(user.getPrivateKey());
         Path path = DirectoryUtil.getStorageDirectory().resolve(file.getId());
-        try (InputStream inputStream = Files.newInputStream(unencryptedFile)) {
-            Files.copy(new CipherInputStream(inputStream, cipher), path);
+        try (InputStream inputStream = EncryptionUtil.encryptInputStream( Files.newInputStream(unencryptedFile),user.getPrivateKey())) {
+            Files.copy(inputStream, path);
         }
 
         // Update the user quota

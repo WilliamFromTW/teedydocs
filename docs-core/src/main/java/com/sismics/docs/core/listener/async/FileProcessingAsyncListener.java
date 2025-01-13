@@ -146,7 +146,6 @@ public class FileProcessingAsyncListener {
 
         // Generate file variations
         try {
-            Cipher cipher = EncryptionUtil.getEncryptionCipher(user.getPrivateKey());
             BufferedImage image = formatHandler.generateThumbnail(event.getUnencryptedFile());
             if (image != null) {
                 // Generate thumbnails from image
@@ -156,13 +155,13 @@ public class FileProcessingAsyncListener {
 
                 // Write "web" encrypted image
                 Path outputFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_web");
-                try (OutputStream outputStream = new CipherOutputStream(Files.newOutputStream(outputFile), cipher)) {
+                try (OutputStream outputStream = EncryptionUtil.encryptOutputStream( Files.newOutputStream(outputFile), user.getPrivateKey())) {
                     ImageUtil.writeJpeg(web, outputStream);
                 }
 
                 // Write "thumb" encrypted image
                 outputFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_thumb");
-                try (OutputStream outputStream = new CipherOutputStream(Files.newOutputStream(outputFile), cipher)) {
+                try (OutputStream outputStream = EncryptionUtil.encryptOutputStream( Files.newOutputStream(outputFile), user.getPrivateKey())) {
                     ImageUtil.writeJpeg(thumbnail, outputStream);
                 }
             }

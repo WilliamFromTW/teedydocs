@@ -66,8 +66,7 @@ public abstract class BaseTransactionalTest extends BaseTest {
             file.setMimeType(MimeType.IMAGE_JPEG);
             file.setSize(fileSize);
             String fileId = fileDao.create(file, user.getId());
-            Cipher cipher = EncryptionUtil.getEncryptionCipher(user.getPrivateKey());
-            Files.copy(new CipherInputStream(inputStream, cipher), DirectoryUtil.getStorageDirectory().resolve(fileId), REPLACE_EXISTING);
+            Files.copy( EncryptionUtil.encryptInputStream(inputStream,user.getPrivateKey()), DirectoryUtil.getStorageDirectory().resolve(fileId), REPLACE_EXISTING);
             return file;
         }
     }

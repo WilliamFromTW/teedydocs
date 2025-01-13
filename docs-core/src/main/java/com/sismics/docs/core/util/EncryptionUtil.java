@@ -4,12 +4,10 @@ import com.google.common.base.Strings;
 import com.sismics.docs.core.model.context.AppContext;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
+import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,13 +26,29 @@ public class EncryptionUtil {
      * Salt.
      */
     private static final String SALT = "LEpxZmm2SMu2PeKzPNrar2rhVAS6LrrgvXKeL9uyXC4vgKHg";
-    
+    public static String FileEncrypt = ConfigUtil.getConfigBundle().getString("file.encrypt");
+
     static {
         // Initialize Bouncy Castle provider
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
         Security.removeProvider("SunRsaSign");
     }
-    
+
+    /**
+     * Encrypt an OutputStream using the specified private key.
+     *
+     * @param os OutputStream to encrypt
+     * @param privateKey Private key
+     * @return Encrypted stream
+     * @throws Exception  e
+     */
+    public static OutputStream encryptOutputStream(OutputStream os, String privateKey) throws Exception {
+        if( FileEncrypt.equals("0"))
+            return os;
+        else
+            return new CipherOutputStream(os, getCipher(privateKey, Cipher.ENCRYPT_MODE));
+    }
+
     /**
      * Generate a private key.
      * 
@@ -48,7 +62,22 @@ public class EncryptionUtil {
             throw new RuntimeException(e);
         }
     }
-    
+
+    /**
+     * Encrypt an InputStream using the specified private key.
+     *
+     * @param is InputStream to encrypt
+     * @param privateKey Private key
+     * @return Encrypted stream
+     * @throws Exception  e
+     */
+    public static InputStream encryptInputStream(InputStream is, String privateKey) throws Exception {
+        if( FileEncrypt.equals("0"))
+            return is;
+        else
+            return new CipherInputStream(is, getCipher(privateKey, Cipher.ENCRYPT_MODE));
+    }
+
     /**
      * Decrypt an InputStream using the specified private key.
      * 
@@ -58,7 +87,10 @@ public class EncryptionUtil {
      * @throws Exception  e
      */
     public static InputStream decryptInputStream(InputStream is, String privateKey) throws Exception {
-        return new CipherInputStream(is, getCipher(privateKey, Cipher.DECRYPT_MODE));
+        if( FileEncrypt.equals("0"))
+          return is;
+        else
+          return new CipherInputStream(is, getCipher(privateKey, Cipher.DECRYPT_MODE));
     }
 
     /**
@@ -70,7 +102,7 @@ public class EncryptionUtil {
      * @throws Exception e
      */
     public static Path decryptFile(Path file, String privateKey) throws Exception {
-        if (privateKey == null) {
+        if (privateKey == null || FileEncrypt.equals("0")) {
             // For unit testing
             return file;
         }
@@ -89,7 +121,7 @@ public class EncryptionUtil {
      * @return Encryption cipher
      * @throws Exception e
      */
-    public static Cipher getEncryptionCipher(String privateKey) throws Exception {
+    private static Cipher getEncryptionCipher(String privateKey) throws Exception {
         if (Strings.isNullOrEmpty(privateKey)) {
             throw new IllegalArgumentException("The private key is null or empty");
         }
