@@ -1,5 +1,21 @@
 package com.sismics.docs.rest.resource;
 
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.text.MessageFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Appender;
+import org.apache.log4j.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.Constants;
@@ -26,24 +42,18 @@ import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.log4j.LogCriteria;
 import com.sismics.util.log4j.LogEntry;
 import com.sismics.util.log4j.MemoryAppender;
+
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
-import jakarta.ws.rs.*;
+import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Appender;
-import org.apache.log4j.Level;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.text.MessageFormat;
-import java.util.*;
 
 /**
  * General app REST resource.
@@ -660,22 +670,23 @@ public class AppResource extends BaseResource {
         Map<String, File> fileMap = new HashMap<>();
         for (File file : fileList) {
             fileMap.put(file.getId(), file);
+            try (DirectoryStream<java.nio.file.Path> storedFileList = Files.newDirectoryStream(DirectoryUtil.getStorageDirectory(file))) {
+                for (java.nio.file.Path storedFile : storedFileList) {
+                    String fileName = storedFile.getFileName().toString();
+                    String[] fileNameArray = fileName.split("_");
+                    if (!fileMap.containsKey(fileNameArray[0])) {
+                        log.info("Deleting orphan files at this location: {}", storedFile);
+                        Files.delete(storedFile);
+                    }
+                }
+            } catch (IOException e) {
+                throw new ServerException("FileError", "Error deleting orphan files", e);
+            }
+    
         }
         log.info("Checking {} files", fileMap.size());
 
         // Check if each stored file is valid
-        try (DirectoryStream<java.nio.file.Path> storedFileList = Files.newDirectoryStream(DirectoryUtil.getStorageDirectory())) {
-            for (java.nio.file.Path storedFile : storedFileList) {
-                String fileName = storedFile.getFileName().toString();
-                String[] fileNameArray = fileName.split("_");
-                if (!fileMap.containsKey(fileNameArray[0])) {
-                    log.info("Deleting orphan files at this location: {}", storedFile);
-                    Files.delete(storedFile);
-                }
-            }
-        } catch (IOException e) {
-            throw new ServerException("FileError", "Error deleting orphan files", e);
-        }
 
         // Hard delete orphan audit logs
         EntityManager em = ThreadLocalContext.get().getEntityManager();

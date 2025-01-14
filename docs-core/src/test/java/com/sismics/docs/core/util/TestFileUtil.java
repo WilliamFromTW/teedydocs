@@ -99,38 +99,38 @@ public class TestFileUtil extends BaseTest {
             documentDto.setCreateTimestamp(new Date().getTime());
             
             // First file
-            Files.copy(inputStream0, DirectoryUtil.getStorageDirectory().resolve("apollo_landscape"), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(inputStream0, DirectoryUtil.getStorageDirectory(null).resolve("apollo_landscape"), StandardCopyOption.REPLACE_EXISTING);
             File file0 = new File();
             file0.setId("apollo_landscape");
             file0.setMimeType(MimeType.IMAGE_JPEG);
             
             // Second file
-            Files.copy(inputStream1, DirectoryUtil.getStorageDirectory().resolve("apollo_portrait"), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(inputStream1, DirectoryUtil.getStorageDirectory(null).resolve("apollo_portrait"), StandardCopyOption.REPLACE_EXISTING);
             File file1 = new File();
             file1.setId("apollo_portrait");
             file1.setMimeType(MimeType.IMAGE_JPEG);
             
             // Third file
-            Files.copy(inputStream2, DirectoryUtil.getStorageDirectory().resolve("udhr"), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(inputStream2, DirectoryUtil.getStorageDirectory(null).resolve("udhr"), StandardCopyOption.REPLACE_EXISTING);
             File file2 = new File();
             file2.setId("udhr");
             file2.setPrivateKey("OnceUponATime");
             file2.setMimeType(MimeType.APPLICATION_PDF);
             
             // Fourth file
-            Files.copy(inputStream3, DirectoryUtil.getStorageDirectory().resolve("document_docx"), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(inputStream3, DirectoryUtil.getStorageDirectory(null).resolve("document_docx"), StandardCopyOption.REPLACE_EXISTING);
             File file3 = new File();
             file3.setId("document_docx");
             file3.setMimeType(MimeType.OFFICE_DOCUMENT);
             
             // Fifth file
-            Files.copy(inputStream4, DirectoryUtil.getStorageDirectory().resolve("document_odt"), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(inputStream4, DirectoryUtil.getStorageDirectory(null).resolve("document_odt"), StandardCopyOption.REPLACE_EXISTING);
             File file4 = new File();
             file4.setId("document_odt");
             file4.setMimeType(MimeType.OPEN_DOCUMENT_TEXT);
 
             // Sixth file
-            Files.copy(inputStream5, DirectoryUtil.getStorageDirectory().resolve("document_pptx"), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(inputStream5, DirectoryUtil.getStorageDirectory(null).resolve("document_pptx"), StandardCopyOption.REPLACE_EXISTING);
             File file5 = new File();
             file5.setId("document_pptx");
             file5.setMimeType(MimeType.OFFICE_PRESENTATION);

@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.sismics.util.EnvironmentUtil;
 
+import com.sismics.docs.core.model.jpa.File;
+
 /**
  * Utilities to gain access to the storage directories used by the application.
  * 
@@ -73,8 +75,11 @@ public class DirectoryUtil {
      * 
      * @return Storage directory.
      */
-    public static Path getStorageDirectory() {
-        return getDataSubDirectory("storage");
+    public static Path getStorageDirectory(File file) {
+        if( EncryptionUtil.FileEncrypt.equals("0") && file!=null)
+          return getDataSubDirectory("storage"+"/"+file.getUserId()+"/"+file.getId());
+        else
+          return getDataSubDirectory("storage");
     }
     
     /**

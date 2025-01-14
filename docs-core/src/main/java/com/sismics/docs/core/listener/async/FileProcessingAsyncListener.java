@@ -154,13 +154,13 @@ public class FileProcessingAsyncListener {
                 image.flush();
 
                 // Write "web" encrypted image
-                Path outputFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_web");
+                Path outputFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName() + "_web");
                 try (OutputStream outputStream = EncryptionUtil.encryptOutputStream( Files.newOutputStream(outputFile), user.getPrivateKey())) {
                     ImageUtil.writeJpeg(web, outputStream);
                 }
 
                 // Write "thumb" encrypted image
-                outputFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_thumb");
+                outputFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName() + "_thumb");
                 try (OutputStream outputStream = EncryptionUtil.encryptOutputStream( Files.newOutputStream(outputFile), user.getPrivateKey())) {
                     ImageUtil.writeJpeg(thumbnail, outputStream);
                 }

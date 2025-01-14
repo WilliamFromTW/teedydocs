@@ -86,12 +86,12 @@ public class FileUtil {
     /**
      * Remove a file from the storage filesystem.
      * 
-     * @param fileId ID of file to delete
+     * @param file ID of file to delete
      */
-    public static void delete(String fileId) throws IOException {
-        Path storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId);
-        Path webFile = DirectoryUtil.getStorageDirectory().resolve(fileId + "_web");
-        Path thumbnailFile = DirectoryUtil.getStorageDirectory().resolve(fileId + "_thumb");
+    public static void delete(File file) throws IOException {
+        Path storedFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName());
+        Path webFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName() + "_web");
+        Path thumbnailFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName() + "_thumb");
         
         if (Files.exists(storedFile)) {
             Files.delete(storedFile);
@@ -186,7 +186,7 @@ public class FileUtil {
         String fileId = fileDao.create(file, userId);
 
         // Save the file
-        Path path = DirectoryUtil.getStorageDirectory().resolve(file.getId());
+        Path path = DirectoryUtil.getStorageDirectory(file).resolve(file.getName());
         try (InputStream inputStream = EncryptionUtil.encryptInputStream( Files.newInputStream(unencryptedFile),user.getPrivateKey())) {
             Files.copy(inputStream, path);
         }
@@ -247,16 +247,16 @@ public class FileUtil {
     /**
      * Get the size of a file on disk.
      *
-     * @param fileId the file id
+     * @param file the file id
      * @param user   the file owner
      * @return the size or -1 if something went wrong
      */
-    public static long getFileSize(String fileId, User user) {
+    public static long getFileSize(File file, User user) {
         // To get the size we copy the decrypted content into a null output stream
         // and count the copied byte size.
-        Path storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId);
+        Path storedFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName());
         if (! Files.exists(storedFile)) {
-            log.debug("File does not exist " + fileId);
+            log.debug("File does not exist " + file.getId());
             return File.UNKNOWN_SIZE;
         }
         try (InputStream fileInputStream = Files.newInputStream(storedFile);
@@ -266,7 +266,7 @@ public class FileUtil {
             IOUtils.copy(countingInputStream, NullOutputStream.NULL_OUTPUT_STREAM);
             return countingInputStream.getByteCount();
         } catch (Exception e) {
-            log.debug("Can't find size of file " + fileId, e);
+            log.debug("Can't find size of file " + file.getId(), e);
             return File.UNKNOWN_SIZE;
         }
     }

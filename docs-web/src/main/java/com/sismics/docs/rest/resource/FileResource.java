@@ -211,7 +211,7 @@ public class FileResource extends BaseResource {
         
         // Raise a new file updated event and document updated event (it wasn't sent during file creation)
         try {
-            java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
+            java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName());
             java.nio.file.Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, user.getPrivateKey());
             FileUtil.startProcessingFile(id);
             FileUpdatedAsyncEvent fileUpdatedAsyncEvent = new FileUpdatedAsyncEvent();
@@ -266,8 +266,21 @@ public class FileResource extends BaseResource {
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 200, false);
 
-        // Update the file
         FileDao fileDao = new FileDao();
+        // file rename 
+        java.nio.file.Path aOriFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName());
+        java.nio.file.Path aDestFile = DirectoryUtil.getStorageDirectory(file).resolve(name);
+        aOriFile.toFile().renameTo(aDestFile.toFile());
+
+        aOriFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName()+"_web");
+        aDestFile = DirectoryUtil.getStorageDirectory(file).resolve(name+"_web");
+        aOriFile.toFile().renameTo(aDestFile.toFile());
+
+        aOriFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName()+"_thumb");
+        aDestFile = DirectoryUtil.getStorageDirectory(file).resolve(name+"_thumb");
+        aOriFile.toFile().renameTo(aDestFile.toFile());
+
+        // Update the file
         file.setName(name);
         fileDao.update(file);
 
@@ -319,7 +332,7 @@ public class FileResource extends BaseResource {
 
         // Start the processing asynchronously
         try {
-            java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
+            java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName());
             java.nio.file.Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, user.getPrivateKey());
             FileUtil.startProcessingFile(id);
             FileUpdatedAsyncEvent event = new FileUpdatedAsyncEvent();
@@ -603,7 +616,7 @@ public class FileResource extends BaseResource {
                         .build();
             }
 
-            storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId + "_" + size);
+            storedFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName() + "_" + size);
             mimeType = MimeType.IMAGE_JPEG; // Thumbnails are JPEG
             decrypt = true; // Thumbnails are encrypted
             if (!Files.exists(storedFile)) {
@@ -616,7 +629,7 @@ public class FileResource extends BaseResource {
                 decrypt = false;
             }
         } else {
-            storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId);
+            storedFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName());
             mimeType = file.getMimeType();
             decrypt = true; // Original files are encrypted
         }
@@ -751,7 +764,7 @@ public class FileResource extends BaseResource {
                 // Add each file to the ZIP stream
                 int index = 0;
                 for (File file : fileList) {
-                    java.nio.file.Path storedfile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
+                    java.nio.file.Path storedfile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName());
                     InputStream fileInputStream = Files.newInputStream(storedfile);
 
                     // Add the decrypted file to the ZIP stream

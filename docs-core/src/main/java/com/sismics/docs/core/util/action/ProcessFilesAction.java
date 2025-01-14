@@ -40,7 +40,7 @@ public class ProcessFilesAction implements Action {
                 User user = userDao.getById(file.getUserId());
 
                 // Decrypt the file
-                Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
+                Path storedFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName());
                 Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, user.getPrivateKey());
 
                 // Start the asynchronous processing

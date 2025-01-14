@@ -1,7 +1,11 @@
 package com.sismics.docs.core.listener.async;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
+import com.sismics.docs.core.dao.FileDao;
 import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
@@ -9,8 +13,6 @@ import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.FileUtil;
 import com.sismics.docs.core.util.TransactionUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Listener on file deleted.
@@ -44,7 +46,7 @@ public class FileDeletedAsyncListener {
 
                 if (fileSize.equals(File.UNKNOWN_SIZE)) {
                     // The file size was not in the database, in this case we need to get from the unencrypted size.
-                    fileSize = FileUtil.getFileSize(event.getFileId(), user);
+                    fileSize = FileUtil.getFileSize( (new FileDao()).getFile( event.getFileId()), user);
                 }
 
                 if (! fileSize.equals(File.UNKNOWN_SIZE)) {
@@ -55,7 +57,7 @@ public class FileDeletedAsyncListener {
         });
 
         // Delete the file from storage
-        FileUtil.delete(event.getFileId());
+        FileUtil.delete((new FileDao()).getFile(event.getFileId()));
 
         TransactionUtil.handle(() -> {
             // Update index

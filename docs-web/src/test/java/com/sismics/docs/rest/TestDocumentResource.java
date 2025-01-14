@@ -1,15 +1,19 @@
 package com.sismics.docs.rest;
 
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Resources;
-import com.sismics.docs.core.util.DirectoryUtil;
-import com.sismics.util.filter.TokenBasedSecurityFilter;
+import java.io.InputStream;
+import java.util.Date;
+
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 import org.joda.time.format.DateTimeFormat;
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Resources;
+import com.sismics.docs.core.util.DirectoryUtil;
+import com.sismics.util.filter.TokenBasedSecurityFilter;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
@@ -18,8 +22,6 @@ import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
-import java.io.InputStream;
-import java.util.Date;
 
 /**
  * Exhaustive test of the document resource.
@@ -418,9 +420,9 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(Status.NOT_FOUND, Status.fromStatusCode(response.getStatus()));
 
         // Check that the associated files are deleted from FS
-        java.io.File storedFile = DirectoryUtil.getStorageDirectory().resolve(file1Id).toFile();
-        java.io.File webFile = DirectoryUtil.getStorageDirectory().resolve(file1Id + "_web").toFile();
-        java.io.File thumbnailFile = DirectoryUtil.getStorageDirectory().resolve(file1Id + "_thumb").toFile();
+        java.io.File storedFile = DirectoryUtil.getStorageDirectory(null).resolve(file1Id).toFile();
+        java.io.File webFile = DirectoryUtil.getStorageDirectory(null).resolve(file1Id + "_web").toFile();
+        java.io.File thumbnailFile = DirectoryUtil.getStorageDirectory(null).resolve(file1Id + "_thumb").toFile();
         Assert.assertFalse(storedFile.exists());
         Assert.assertFalse(webFile.exists());
         Assert.assertFalse(thumbnailFile.exists());

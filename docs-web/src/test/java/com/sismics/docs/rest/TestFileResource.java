@@ -1,16 +1,23 @@
 package com.sismics.docs.rest;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Date;
+import java.util.zip.ZipInputStream;
+
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+import org.junit.Assert;
+import org.junit.Test;
+
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Resources;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 import com.sismics.util.mime.MimeType;
 import com.sismics.util.mime.MimeTypeUtil;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
-import org.junit.Assert;
-import org.junit.Test;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
@@ -19,11 +26,6 @@ import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Date;
-import java.util.zip.ZipInputStream;
 
 /**
  * Exhaustive test of the file resource.
@@ -90,7 +92,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertTrue(fileBytes.length > 0);
         
         // Check that the files are not readable directly from FS
-        Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file1Id);
+        Path storedFile = DirectoryUtil.getStorageDirectory(null).resolve(file1Id);
         Assert.assertEquals(MimeType.DEFAULT, MimeTypeUtil.guessMimeType(storedFile, null));
 
         // Get all files from a document
@@ -168,9 +170,9 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(Status.NOT_FOUND, Status.fromStatusCode(response.getStatus()));
         
         // Check that files are deleted from FS
-        storedFile = DirectoryUtil.getStorageDirectory().resolve(file1Id);
-        Path webFile = DirectoryUtil.getStorageDirectory().resolve(file1Id + "_web");
-        Path thumbnailFile = DirectoryUtil.getStorageDirectory().resolve(file1Id + "_thumb");
+        storedFile = DirectoryUtil.getStorageDirectory(null).resolve(file1Id);
+        Path webFile = DirectoryUtil.getStorageDirectory(null).resolve(file1Id + "_web");
+        Path thumbnailFile = DirectoryUtil.getStorageDirectory(null).resolve(file1Id + "_thumb");
         Assert.assertFalse(Files.exists(storedFile));
         Assert.assertFalse(Files.exists(webFile));
         Assert.assertFalse(Files.exists(thumbnailFile));

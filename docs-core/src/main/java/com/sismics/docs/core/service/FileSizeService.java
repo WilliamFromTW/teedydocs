@@ -63,10 +63,11 @@ public class FileSizeService extends AbstractScheduledService {
             return;
         }
 
-        long fileSize = FileUtil.getFileSize(file.getId(), user);
+        long fileSize = FileUtil.getFileSize(file, user);
         if(fileSize != File.UNKNOWN_SIZE){
             FileDao fileDao = new FileDao();
             file.setSize(fileSize);
+
             fileDao.update(file);
         }
     }

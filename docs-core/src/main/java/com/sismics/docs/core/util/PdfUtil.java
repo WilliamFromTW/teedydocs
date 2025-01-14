@@ -103,7 +103,7 @@ public class PdfUtil {
             
             // Add files
             for (File file : fileList) {
-                Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
+                Path storedFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName());
 
                 // Decrypt the file to a temporary file
                 Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, file.getPrivateKey());

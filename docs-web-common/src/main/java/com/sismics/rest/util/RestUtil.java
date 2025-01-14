@@ -1,5 +1,8 @@
 package com.sismics.rest.util;
 
+import java.io.IOException;
+import java.nio.file.Files;
+
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.core.util.FileUtil;
@@ -8,9 +11,6 @@ import com.sismics.util.JsonUtil;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObjectBuilder;
-
-import java.io.IOException;
-import java.nio.file.Files;
 
 /**
  * Rest utilities.
@@ -27,7 +27,7 @@ public class RestUtil {
      */
     public static JsonObjectBuilder fileToJsonObjectBuilder(File fileDb) {
         try {
-            long fileSize = fileDb.getSize().equals(File.UNKNOWN_SIZE) ? Files.size(DirectoryUtil.getStorageDirectory().resolve(fileDb.getId())) : fileDb.getSize();
+            long fileSize = fileDb.getSize().equals(File.UNKNOWN_SIZE) ? Files.size(DirectoryUtil.getStorageDirectory(fileDb).resolve(fileDb.getName())) : fileDb.getSize();
             return Json.createObjectBuilder()
                     .add("id", fileDb.getId())
                     .add("processing", FileUtil.isProcessingFile(fileDb.getId()))
