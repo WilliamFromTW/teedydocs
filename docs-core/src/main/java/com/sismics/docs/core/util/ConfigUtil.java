@@ -1,16 +1,26 @@
 package com.sismics.docs.core.util;
 
+import java.util.ResourceBundle;
+
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.dao.ConfigDao;
 import com.sismics.docs.core.model.jpa.Config;
-
-import java.util.ResourceBundle;
 
 /**
  * Configuration parameter utilities.
  *
  */
 public class ConfigUtil {
+
+
+    public static boolean isFileEncrypt(){
+       return ConfigUtil.getConfigBundle().getString("file.encrypt").equals("1") ;
+    }
+
+    public static boolean isFileDelete(){
+        return ConfigUtil.getConfigBundle().getString("file.delete").equals("1") ;
+     }
+ 
     /**
      * Returns the textual value of a configuration parameter.
      *
