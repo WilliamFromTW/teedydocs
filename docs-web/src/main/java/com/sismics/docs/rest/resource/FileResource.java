@@ -551,6 +551,7 @@ public class FileResource extends BaseResource {
         FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
         fileDeletedAsyncEvent.setUserId(principal.getId());
         fileDeletedAsyncEvent.setFileId(file.getId());
+        fileDeletedAsyncEvent.setFileName(file.getName());
         fileDeletedAsyncEvent.setFileSize(file.getSize());
         ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         
