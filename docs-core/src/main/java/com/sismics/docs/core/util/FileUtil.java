@@ -31,6 +31,7 @@ import com.sismics.docs.core.dao.FileDao;
 import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.event.FileCreatedAsyncEvent;
+import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
@@ -93,6 +94,18 @@ public class FileUtil {
      * 
      * @param file ID of file to delete
      */
+    public static void delete(FileDeletedAsyncEvent event) throws IOException {
+       File aFile = new File();
+       aFile.setId(event.getFileId());
+       aFile.setUserId(event.getUserId());
+       aFile.setName(event.getFileName());
+       delete(aFile);
+    }
+    /**
+     * Remove a file from the storage filesystem.
+     * 
+     * @param file ID of file to delete
+     */
     public static void delete(File file) throws IOException {
         Path storedFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName());
         Path webFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName() + "_web");
@@ -122,7 +135,10 @@ public class FileUtil {
               thumbnailFile.toFile().renameTo(aDestFile.toFile());  
             }
         }
-    }
+       
+        Files.delete(DirectoryUtil.getStorageDirectory(file));
+        
+}
 
     
     /**
