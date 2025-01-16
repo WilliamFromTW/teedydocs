@@ -1,5 +1,28 @@
 package com.sismics.docs.core.util;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.imageio.ImageIO;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.CountingInputStream;
+import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.CharStreams;
@@ -8,6 +31,7 @@ import com.sismics.docs.core.dao.FileDao;
 import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.event.FileCreatedAsyncEvent;
+import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
@@ -16,24 +40,6 @@ import com.sismics.util.Scalr;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.io.InputStreamReaderThread;
 import com.sismics.util.mime.MimeTypeUtil;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.input.CountingInputStream;
-import org.apache.commons.io.output.NullOutputStream;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
 
 /**
  * File entity utilities.
@@ -88,22 +94,53 @@ public class FileUtil {
      * 
      * @param file ID of file to delete
      */
+    public static void delete(FileDeletedAsyncEvent event) throws IOException {
+       File aFile = new File();
+       aFile.setId(event.getFileId());
+       aFile.setUserId(event.getUserId());
+       aFile.setName(event.getFileName());
+       delete(aFile);
+    }
+    /**
+     * Remove a file from the storage filesystem.
+     * 
+     * @param file ID of file to delete
+     */
     public static void delete(File file) throws IOException {
         Path storedFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName());
         Path webFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName() + "_web");
         Path thumbnailFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName() + "_thumb");
         
         if (Files.exists(storedFile)) {
-            Files.delete(storedFile);
+            if( ConfigUtil.isFileDelete() )
+              Files.delete(storedFile);
+            else{
+              java.nio.file.Path aDestFile = DirectoryUtil.getDeleteStorageDirectory(file).resolve(file.getName());
+              storedFile.toFile().renameTo(aDestFile.toFile());
+            }
         }
         if (Files.exists(webFile)) {
-            Files.delete(webFile);
+            if( ConfigUtil.isFileDelete() )
+              Files.delete(webFile);
+            else{
+              java.nio.file.Path aDestFile = DirectoryUtil.getDeleteStorageDirectory(file).resolve(file.getName()+"_web");
+              webFile.toFile().renameTo(aDestFile.toFile());
+            }
         }
         if (Files.exists(thumbnailFile)) {
-            Files.delete(thumbnailFile);
+            if( ConfigUtil.isFileDelete() )
+              Files.delete(thumbnailFile);
+            else{
+              java.nio.file.Path aDestFile = DirectoryUtil.getDeleteStorageDirectory(file).resolve(file.getName()+"_thumb");
+              thumbnailFile.toFile().renameTo(aDestFile.toFile());  
+            }
         }
-    }
+       
+        Files.delete(DirectoryUtil.getStorageDirectory(file));
+        
+}
 
+    
     /**
      * Create a new file.
      *

@@ -1,11 +1,5 @@
 package com.sismics.docs.core.util;
 
-import com.google.common.base.Strings;
-import com.sismics.docs.core.model.context.AppContext;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
-import javax.crypto.*;
-import javax.crypto.spec.PBEKeySpec;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -15,6 +9,18 @@ import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.Security;
+
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import com.google.common.base.Strings;
+import com.sismics.docs.core.model.context.AppContext;
 
 /**
  * Encryption utilities.
@@ -26,7 +32,6 @@ public class EncryptionUtil {
      * Salt.
      */
     private static final String SALT = "LEpxZmm2SMu2PeKzPNrar2rhVAS6LrrgvXKeL9uyXC4vgKHg";
-    public static String FileEncrypt = ConfigUtil.getConfigBundle().getString("file.encrypt");
 
     static {
         // Initialize Bouncy Castle provider
@@ -43,7 +48,7 @@ public class EncryptionUtil {
      * @throws Exception  e
      */
     public static OutputStream encryptOutputStream(OutputStream os, String privateKey) throws Exception {
-        if( FileEncrypt.equals("0"))
+        if( !ConfigUtil.isFileEncrypt())
             return os;
         else
             return new CipherOutputStream(os, getCipher(privateKey, Cipher.ENCRYPT_MODE));
@@ -72,7 +77,7 @@ public class EncryptionUtil {
      * @throws Exception  e
      */
     public static InputStream encryptInputStream(InputStream is, String privateKey) throws Exception {
-        if( FileEncrypt.equals("0"))
+        if( !ConfigUtil.isFileEncrypt())
             return is;
         else
             return new CipherInputStream(is, getCipher(privateKey, Cipher.ENCRYPT_MODE));
@@ -87,7 +92,7 @@ public class EncryptionUtil {
      * @throws Exception  e
      */
     public static InputStream decryptInputStream(InputStream is, String privateKey) throws Exception {
-        if( FileEncrypt.equals("0"))
+        if( !ConfigUtil.isFileEncrypt())
           return is;
         else
           return new CipherInputStream(is, getCipher(privateKey, Cipher.DECRYPT_MODE));
@@ -102,7 +107,7 @@ public class EncryptionUtil {
      * @throws Exception e
      */
     public static Path decryptFile(Path file, String privateKey) throws Exception {
-        if (privateKey == null || FileEncrypt.equals("0")) {
+        if (privateKey == null || !ConfigUtil.isFileEncrypt()) {
             // For unit testing
             return file;
         }

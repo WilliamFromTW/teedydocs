@@ -1,20 +1,21 @@
 package com.sismics.docs.core.dao;
 
-import com.sismics.docs.core.constant.AuditLogType;
-import com.sismics.docs.core.model.jpa.File;
-import com.sismics.docs.core.util.AuditLogUtil;
-import com.sismics.util.context.ThreadLocalContext;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.Query;
-import jakarta.persistence.TypedQuery;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import com.sismics.docs.core.constant.AuditLogType;
+import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.util.AuditLogUtil;
+import com.sismics.util.context.ThreadLocalContext;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 /**
  * File DAO.
@@ -184,7 +185,24 @@ public class FileDao {
             return null;
         }
     }
-    
+
+        /**
+     * Gets a file by its ID.
+     * 
+     * @param id File ID
+     * @return File
+     */
+    public File getById(String id) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        TypedQuery<File> q = em.createQuery("select f from File f where f.id = :id", File.class);
+        q.setParameter("id", id);
+        try {
+            return q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
     /**
      * Get files by document ID or all orphan files of a user.
      * 

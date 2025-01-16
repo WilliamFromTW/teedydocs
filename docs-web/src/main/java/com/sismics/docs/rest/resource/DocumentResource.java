@@ -1013,6 +1013,7 @@ public class DocumentResource extends BaseResource {
             fileDeletedAsyncEvent.setUserId(principal.getId());
             fileDeletedAsyncEvent.setFileId(file.getId());
             fileDeletedAsyncEvent.setFileSize(file.getSize());
+            fileDeletedAsyncEvent.setFileName(file.getName());
             ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         }
 

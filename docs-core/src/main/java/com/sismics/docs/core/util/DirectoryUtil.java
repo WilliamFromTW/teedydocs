@@ -7,9 +7,8 @@ import java.nio.file.Paths;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.sismics.util.EnvironmentUtil;
-
 import com.sismics.docs.core.model.jpa.File;
+import com.sismics.util.EnvironmentUtil;
 
 /**
  * Utilities to gain access to the storage directories used by the application.
@@ -76,10 +75,34 @@ public class DirectoryUtil {
      * @return Storage directory.
      */
     public static Path getStorageDirectory(File file) {
-        if( EncryptionUtil.FileEncrypt.equals("0") && file!=null)
+        if( !ConfigUtil.isFileEncrypt() && file!=null)
           return getDataSubDirectory("storage"+"/"+file.getUserId()+"/"+file.getId());
         else
           return getDataSubDirectory("storage");
+    }
+
+    /**
+     * Returns the storage directory.
+     * 
+     * @return Storage directory.
+     */
+    public static Path getStorageDirectory(String sUserID,String sFileID) {
+        if( !ConfigUtil.isFileEncrypt() )
+          return getDataSubDirectory("storage"+"/"+sUserID+"/"+sFileID);
+        else
+          return getDataSubDirectory("storage");
+    }
+
+    /**
+     * Returns the deleted storage directory.
+     * 
+     * @return Storage directory.
+     */
+    public static Path getDeleteStorageDirectory(File file) {
+        if( !ConfigUtil.isFileEncrypt() && file!=null)
+          return getDataSubDirectory("delete/storage"+"/"+file.getUserId()+"/"+file.getId());
+        else
+          return getDataSubDirectory("delete/storage");
     }
     
     /**

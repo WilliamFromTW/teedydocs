@@ -13,7 +13,17 @@ public class FileDeletedAsyncEvent extends UserEvent {
      */
     private String fileId;
 
+    private String fileName;
+
     private Long fileSize;
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
     public String getFileId() {
         return fileId;

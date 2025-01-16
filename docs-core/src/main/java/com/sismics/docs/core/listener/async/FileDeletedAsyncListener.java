@@ -57,7 +57,7 @@ public class FileDeletedAsyncListener {
         });
 
         // Delete the file from storage
-        FileUtil.delete((new FileDao()).getFile(event.getFileId()));
+        FileUtil.delete(event);
 
         TransactionUtil.handle(() -> {
             // Update index
