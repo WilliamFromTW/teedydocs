@@ -1,5 +1,27 @@
 package com.sismics.docs.core.service;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.mail.Flags;
+import javax.mail.Folder;
+import javax.mail.FolderClosedException;
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Store;
+import javax.mail.search.FlagTerm;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.util.concurrent.AbstractScheduledService;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.dao.TagDao;
@@ -15,16 +37,6 @@ import com.sismics.docs.core.util.TransactionUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.EmailUtil;
 import com.sismics.util.context.ThreadLocalContext;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.mail.*;
-import javax.mail.search.FlagTerm;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Inbox scanning service.
@@ -218,6 +230,12 @@ public class InboxService extends AbstractScheduledService {
             }
             log.debug("Tags found: " + String.join(", ", tagsFound));
             subject = subject.trim().replaceAll(" +", " ");
+
+            pattern = Pattern.compile("\\[(.*)]");
+            matcher = pattern.matcher(subject);
+            if (matcher.find()) { 
+              subject = matcher.group(1);
+            }
         }
 
         document.setUserId("admin");
