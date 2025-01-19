@@ -13,24 +13,41 @@ import com.sismics.docs.core.model.jpa.Config;
 public class ConfigUtil {
 
     private static Boolean isFileEncrypt = null;
-    private static Boolean isFileDelete = null;
+    private static Boolean isSoftDelete = null;
     private static Boolean canFileDuplicate = null;
 
-    public static boolean isFileEncrypt(){
-        if( isFileEncrypt == null )
+    public static boolean isFileEncrypt(){    
+      if( isFileEncrypt == null ){
+        try{
           isFileEncrypt = ConfigUtil.getConfigBundle().getString("file.encrypt").equals("1") ;
-       return isFileEncrypt;
+        }
+        catch(Exception ee){
+          isFileEncrypt = true;
+        }
+      }
+      return isFileEncrypt;
     }
 
     public static boolean isFileDelete(){
-        if( isFileDelete == null )
-          isFileDelete = ConfigUtil.getConfigBundle().getString("file.delete").equals("1");
-        return  isFileDelete;
+      if( isSoftDelete == null ){
+        try{
+          isSoftDelete = ConfigUtil.getConfigBundle().getString("file.delete").equals("1");
+        }
+        catch(Exception ee){
+          isSoftDelete = true;
+        }
+      }
+      return isSoftDelete;
      }
 
      public static boolean canFileDuplicate(){
-        if( canFileDuplicate == null )
-          canFileDuplicate = ConfigUtil.getConfigBundle().getString("file.duplicate").equals("1") ;
+        if( canFileDuplicate == null ){
+          try{
+            canFileDuplicate = ConfigUtil.getConfigBundle().getString("file.duplicate").equals("1") ;
+          }catch(Exception ee){
+            canFileDuplicate = true;
+          }
+        }
         return canFileDuplicate;
      }
  
