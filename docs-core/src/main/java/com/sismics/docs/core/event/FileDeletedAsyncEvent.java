@@ -13,9 +13,19 @@ public class FileDeletedAsyncEvent extends UserEvent {
      */
     private String fileId;
 
+    private String documentId;
+
     private String fileName;
 
     private Long fileSize;
+
+    public String getDucumentId() {
+        return documentId;
+    }
+
+    public void setDucumentId(String documentId) {
+        this.documentId = documentId;
+    }
 
     public String getFileName() {
         return fileName;
@@ -45,6 +55,8 @@ public class FileDeletedAsyncEvent extends UserEvent {
     public String toString() {
         return MoreObjects.toStringHelper(this)
             .add("fileId", fileId)
+            .add("documentId", documentId)
+            .add("fileName", fileName)
             .add("fileSize", fileSize)
             .toString();
     }

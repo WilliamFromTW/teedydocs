@@ -61,7 +61,6 @@ angular.module('docs').controller('DocumentDefault', function ($scope, $rootScop
           // Update local model with real data
           newfile.id = data.id;
           newfile.size = data.size;
-
           // New file uploaded, increase used quota
           $rootScope.userInfo.storage_current += data.size;
         })
@@ -69,6 +68,8 @@ angular.module('docs').controller('DocumentDefault', function ($scope, $rootScop
           newfile.status = $translate.instant('document.default.upload_error');
           if (data.type === 'QuotaReached') {
             newfile.status += ' - ' + $translate.instant('document.default.upload_error_quota');
+          }else if (data.type=== 'FileNameDuplicate'){
+            newfile.status += ' - ' + $translate.instant('document.default.upload_error_duplicate');
           }
         });
   };

@@ -31,6 +31,7 @@ import com.sismics.docs.core.event.FileUpdatedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.core.util.EncryptionUtil;
 import com.sismics.docs.core.util.FileUtil;
@@ -149,9 +150,19 @@ public class FileResource extends BaseResource {
                     .add("size", fileSize);
             return Response.ok().entity(response.build()).build();
         } catch (IOException e) {
-            throw new ClientException(e.getMessage(), e.getMessage(), e);
+          //throw new ClientException(e.getMessage(), e.getMessage(), e);
+          JsonObjectBuilder response = Json.createObjectBuilder()
+          .add("status", "FileError")
+          .add("type", e.getMessage())
+          .add("message", e.getMessage());
+          return Response.status(403).entity(response.build()).build();
         } catch (Exception e) {
-            throw new ServerException("FileError", "Error adding a file", e);
+          //throw new ServerException("FileError", "Error adding a file", e);
+          JsonObjectBuilder response = Json.createObjectBuilder()
+          .add("status", "FileError")
+          .add("type", "Exception")
+          .add("message", "Error adding a file");
+          return Response.status(403).entity(response.build()).build();
         }
     }
     
@@ -205,7 +216,26 @@ public class FileResource extends BaseResource {
         }
         
         // Update the file
-        file.setDocumentId(documentId);
+        if( !ConfigUtil.canFileDuplicate() ){
+          if( file.getDocumentId() == null && documentId!=null){
+            try{
+              java.nio.file.Path filePath = DirectoryUtil.getStorageDirectory(file).resolve(file.getName());            
+              java.nio.file.Path thumbnailFilePath = DirectoryUtil.getStorageDirectory(file).resolve(file.getName() + "_thumb");            
+              java.nio.file.Path webFilePath = DirectoryUtil.getStorageDirectory(file).resolve(file.getName() + "_web");            
+              file.setDocumentId(documentId);
+              java.nio.file.Path filePathDest = DirectoryUtil.getStorageDirectory(file).resolve(file.getName());            
+              java.nio.file.Path thumbnailFilePathDest = DirectoryUtil.getStorageDirectory(file).resolve(file.getName() + "_thumb");            
+              java.nio.file.Path webFilePathDest = DirectoryUtil.getStorageDirectory(file).resolve(file.getName() + "_web");            
+              filePath.toFile().renameTo(filePathDest.toFile());
+              thumbnailFilePath.toFile().renameTo(thumbnailFilePathDest.toFile());
+              webFilePath.toFile().renameTo(webFilePathDest.toFile());
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+          }
+        }else
+          file.setDocumentId(documentId);
+
         file.setOrder(fileDao.getByDocumentId(principal.getId(), documentId).size());
         fileDao.update(file);
         
@@ -552,6 +582,7 @@ public class FileResource extends BaseResource {
         fileDeletedAsyncEvent.setUserId(principal.getId());
         fileDeletedAsyncEvent.setFileId(file.getId());
         fileDeletedAsyncEvent.setFileName(file.getName());
+        fileDeletedAsyncEvent.setDucumentId(file.getDocumentId());
         fileDeletedAsyncEvent.setFileSize(file.getSize());
         ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         

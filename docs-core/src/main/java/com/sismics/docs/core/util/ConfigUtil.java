@@ -12,13 +12,26 @@ import com.sismics.docs.core.model.jpa.Config;
  */
 public class ConfigUtil {
 
+    private static Boolean isFileEncrypt = null;
+    private static Boolean isFileDelete = null;
+    private static Boolean canFileDuplicate = null;
 
     public static boolean isFileEncrypt(){
-       return ConfigUtil.getConfigBundle().getString("file.encrypt").equals("1") ;
+        if( isFileEncrypt == null )
+          isFileEncrypt = ConfigUtil.getConfigBundle().getString("file.encrypt").equals("1") ;
+       return isFileEncrypt;
     }
 
     public static boolean isFileDelete(){
-        return ConfigUtil.getConfigBundle().getString("file.delete").equals("1") ;
+        if( isFileDelete == null )
+          isFileDelete = ConfigUtil.getConfigBundle().getString("file.delete").equals("1");
+        return  isFileDelete;
+     }
+
+     public static boolean canFileDuplicate(){
+        if( canFileDuplicate == null )
+          canFileDuplicate = ConfigUtil.getConfigBundle().getString("file.duplicate").equals("1") ;
+        return canFileDuplicate;
      }
  
     /**

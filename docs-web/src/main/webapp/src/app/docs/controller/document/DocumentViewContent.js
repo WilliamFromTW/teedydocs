@@ -170,6 +170,8 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
       newfile.status = $translate.instant('document.view.content.upload_error');
       if (data.type === 'QuotaReached') {
         newfile.status += ' - ' + $translate.instant('document.view.content.upload_error_quota');
+      }else if (data.type=== 'FileNameDuplicate'){
+        newfile.status += ' - ' + $translate.instant('document.default.upload_error_duplicate');
       }
     });
   };

@@ -186,7 +186,46 @@ public class FileDao {
         }
     }
 
-        /**
+    /**
+     * Gets a file by its ID.
+     * 
+     * @param name File ID
+     * @return File
+     */
+    public List<File> getByUserIdFileName(String userId,String name) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        TypedQuery<File> q = em.createQuery("select f from File f where f.userId = :userId and f.name = :name and f.deleteDate is null", File.class);
+        q.setParameter("userId", userId);
+        q.setParameter("name", name);
+        try {
+          if(  q.getResultList().size()>0 )
+            return q.getResultList();
+          else return null;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Gets a file by its ID.
+     * f.userId = :userId
+     * @param name File ID
+     * @return File
+     */
+    public List<File> getByName(String name) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        TypedQuery<File> q = em.createQuery("select f from File f where f.name = :name and f.deleteDate is null", File.class);
+        q.setParameter("name", name);
+        try {
+          if(  q.getResultList().size()>0 )
+            return q.getResultList();
+          else return null;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
      * Gets a file by its ID.
      * 
      * @param id File ID
@@ -194,7 +233,7 @@ public class FileDao {
      */
     public File getById(String id) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        TypedQuery<File> q = em.createQuery("select f from File f where f.id = :id", File.class);
+        TypedQuery<File> q = em.createQuery("select f from File f where f.id = :id and f.deleteDate is null", File.class);
         q.setParameter("id", id);
         try {
             return q.getSingleResult();

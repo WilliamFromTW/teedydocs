@@ -75,24 +75,22 @@ public class DirectoryUtil {
      * @return Storage directory.
      */
     public static Path getStorageDirectory(File file) {
-        if( !ConfigUtil.isFileEncrypt() && file!=null)
-          return getDataSubDirectory("storage"+"/"+file.getUserId()+"/"+file.getId());
+        if( !ConfigUtil.isFileEncrypt() && file!=null){
+          if( ConfigUtil.canFileDuplicate() )
+            return getDataSubDirectory("storage"+"/"+file.getUserId()+"/"+file.getId());
+          else{
+            if(  file.getDocumentId()==null || file.getDocumentId().trim().equals("") )
+              return getDataSubDirectory("storage"+"/"+file.getUserId());
+            else{
+              return getDataSubDirectory("storage"+"/"+file.getUserId()+"/"+ file.getDocumentId());
+            }
+          }
+        }
         else
           return getDataSubDirectory("storage");
     }
 
-    /**
-     * Returns the storage directory.
-     * 
-     * @return Storage directory.
-     */
-    public static Path getStorageDirectory(String sUserID,String sFileID) {
-        if( !ConfigUtil.isFileEncrypt() )
-          return getDataSubDirectory("storage"+"/"+sUserID+"/"+sFileID);
-        else
-          return getDataSubDirectory("storage");
-    }
-
+  
     /**
      * Returns the deleted storage directory.
      * 

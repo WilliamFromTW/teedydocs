@@ -97,6 +97,7 @@ public class FileUtil {
     public static void delete(FileDeletedAsyncEvent event) throws IOException {
        File aFile = new File();
        aFile.setId(event.getFileId());
+       aFile.setDocumentId(event.getDucumentId());
        aFile.setUserId(event.getUserId());
        aFile.setName(event.getFileName());
        delete(aFile);
@@ -193,6 +194,11 @@ public class FileUtil {
 
         // Get files of this document
         FileDao fileDao = new FileDao();
+        if( !ConfigUtil.canFileDuplicate() ){
+            if(fileDao.getByUserIdFileName(userId,StringUtils.abbreviate(name, 200))!=null){
+                throw new IOException("FileNameDuplicate");
+            }
+        }
         if (documentId != null) {
             if (previousFileId == null) {
                 // It's not a new version, so put it in last order
