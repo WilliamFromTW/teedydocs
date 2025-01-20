@@ -407,7 +407,7 @@
       "message_guest_access": "訪客權限是所有人都能無需密碼即可取得 {{ appName }} 的權限模式.<br/>和其他正常帳號一樣, 訪客權限帳號也只能通過其取得的權限來存取其文件.<br/>",
       "enable_guest_access": "啟用訪客權限",
       "disable_guest_access": "不啟用訪客權限",
-      "title_theme": "主題 <small>定制</small>",
+      "title_theme": "佈景主題 <small>設定</small>",
       "title_general": "一般設定",
       "default_language": "新文件預設語言",
       "application_name": "名稱",
