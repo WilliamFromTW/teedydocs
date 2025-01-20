@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -297,6 +298,17 @@ public class FileResource extends BaseResource {
         name = ValidationUtil.validateLength(name, "name", 1, 200, false);
 
         FileDao fileDao = new FileDao();
+        if( !ConfigUtil.canFileDuplicate() ){
+          if(fileDao.getByUserIdFileName(file.getUserId(),StringUtils.abbreviate(name, 200))!=null){
+            //throw new ClientException(e.getMessage(), e.getMessage(), e);
+            JsonObjectBuilder response = Json.createObjectBuilder()
+            .add("status", "FileError")
+            .add("type", "FileNameDuplicate")
+            .add("message", "UserID="+file.getUserId()+",name="+name);
+            return Response.status(403).entity(response.build()).build();
+          }
+        }
+
         // file rename 
         java.nio.file.Path aOriFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName());
         java.nio.file.Path aDestFile = DirectoryUtil.getStorageDirectory(file).resolve(name);

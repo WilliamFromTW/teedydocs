@@ -152,8 +152,8 @@
       }
     },
     "edit": {
-      "document_edited_with_errors": "文件編輯成功但部分文件沒能上傳",
-      "document_added_with_errors": "文件成功新增但部分文件沒能上傳",
+      "document_edited_with_errors": "文件編輯成功但部分檔案沒能上傳",
+      "document_added_with_errors": "文件成功新增但部分檔案沒能上傳",
       "quota_reached": "達到上限",
       "primary_metadata": "文件資料",
       "title_placeholder": "文件名稱",
@@ -166,7 +166,8 @@
       "publisher_placeholder": "出版者",
       "format_placeholder": "文件格式",
       "source_placeholder": "出處",
-      "uploading_files": "文件上傳中..."
+      "uploading_files": "檔案上傳中...",
+      "rename_error": "檔案異動失敗"
     },
     "default": {
       "upload_pending": "等待中...",

@@ -166,7 +166,8 @@
       "publisher_placeholder": "负责提供资源的实体",
       "format_placeholder": "资源的文件格式, 物理介质或维度",
       "source_placeholder": "从中导出所描述的资源的相关来源",
-      "uploading_files": "上传文件中..."
+      "uploading_files": "文档上传中...",
+      "rename_error": "文档异动失败"
     },
     "default": {
       "upload_pending": "等待中...",

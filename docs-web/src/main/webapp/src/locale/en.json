@@ -166,7 +166,8 @@
       "publisher_placeholder": "An entity responsible for making the resource available",
       "format_placeholder": "The file format, physical medium, or dimensions of the resource",
       "source_placeholder": "A related resource from which the described resource is derived",
-      "uploading_files": "Uploading files..."
+      "uploading_files": "Uploading files...",
+      "rename_error": "File rename failed"
     },
     "default": {
       "upload_pending": "Pending...",

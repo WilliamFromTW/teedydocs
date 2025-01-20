@@ -198,6 +198,8 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
         name: fileUpdated.name
       }).then(function () {
         file.name = fileUpdated.name;
+      },function(error){
+        file.name = $translate.instant('document.edit.rename_error');
       })
     });
   };
