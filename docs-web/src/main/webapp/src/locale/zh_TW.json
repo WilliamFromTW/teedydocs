@@ -280,7 +280,7 @@
     "menu_groups": "群組",
     "menu_vocabularies": "詞彙",
     "menu_configuration": "設定",
-    "menu_inbox": "收件匣",
+    "menu_inbox": "掃描收件匣",
     "menu_ldap": "LDAP 驗證",
     "menu_metadata": "自訂屬性",
     "menu_monitoring": "監控",
@@ -442,7 +442,7 @@
       "type": "類型"
     },
     "inbox": {
-      "title": "收件匣掃描",
+      "title": "掃描收件匣",
       "message": "啟用此功能，系統將定期掃描收件匣中新的電子郵件並自動匯入。",
       "enabled": "啟用收件匣掃描功能",
       "hostname": "IMAP主機名稱",
