@@ -90,7 +90,7 @@ public class InboxService extends AbstractScheduledService {
                 return;
             }
 
-            log.info("Synchronizing IMAP inbox...");
+            //log.info("Synchronizing IMAP inbox...");
             Folder inbox = null;
             lastSyncError = null;
             lastSyncDate = new Date();
@@ -100,11 +100,13 @@ public class InboxService extends AbstractScheduledService {
 
                 inbox = openInbox();
                 Message[] messages = inbox.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
-                log.info(messages.length + " messages found");
-                for (Message message : messages) {
+                if( messages.length>0){
+                  log.info(messages.length + " messages found");
+                  for (Message message : messages) {
                     InternetAddress sender = (InternetAddress) message.getFrom()[0];
                     importMessage(message, tagsNameToId,sender);
                     lastSyncMessageCount++;
+                  }
                 }
             } catch (FolderClosedException e) {
                 // Ignore this, we will just continue importing on the next cycle
