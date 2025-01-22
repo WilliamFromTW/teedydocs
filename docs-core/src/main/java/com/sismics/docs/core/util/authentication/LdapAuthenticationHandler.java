@@ -75,7 +75,6 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
                 ldapConnection.bind(userEntry.getDn(), password);
                 if( ConfigUtil.getConfigStringValue(ConfigType.LDAP_DEFAULT_GROUPMEMBERSHIP )!=null && userEntry.get(  ConfigUtil.getConfigStringValue(ConfigType.LDAP_DEFAULT_GROUPMEMBERSHIP ))!=null){
                   sGroupName = userEntry.get(  ConfigUtil.getConfigStringValue(ConfigType.LDAP_DEFAULT_GROUPMEMBERSHIP )).getString();
-                  System.out.println( "get groupmembership = "+userEntry.get(  ConfigUtil.getConfigStringValue(ConfigType.LDAP_DEFAULT_GROUPMEMBERSHIP )).getString() );
                 }
                 
             } else {
