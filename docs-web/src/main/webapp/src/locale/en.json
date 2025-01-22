@@ -296,7 +296,9 @@
       "filter": "Search filter (must contains USERNAME, eg. \"(uid=USERNAME)\")",
       "default_email": "Default email for LDAP user",
       "default_storage": "Default storage for LDAP user",
-      "saved": "LDAP configuration saved successfully"
+      "saved": "LDAP configuration saved successfully",
+      "default_group": "Default Group",
+      "default_groupmembership": "\"Group\" field name"
     },
     "user": {
       "title": "Users management",

@@ -22,6 +22,7 @@ import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.ConfigDao;
 import com.sismics.docs.core.dao.DocumentDao;
 import com.sismics.docs.core.dao.FileDao;
+import com.sismics.docs.core.dao.GroupDao;
 import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
@@ -795,6 +796,11 @@ public class AppResource extends BaseResource {
 
         JsonObjectBuilder response = Json.createObjectBuilder();
         if (enabled != null && Boolean.parseBoolean(enabled.getValue())) {
+            String sGroupID = ConfigUtil.getConfigStringValue(ConfigType.LDAP_DEFAULT_GROUP);
+            GroupDao groupDao = new GroupDao();            
+            com.sismics.docs.core.model.jpa.Group aGroup =  groupDao.getActiveById(sGroupID);
+            if( aGroup  == null)
+              sGroupID = "";
             // LDAP enabled
             response.add("enabled", true)
                     .add("host", ConfigUtil.getConfigStringValue(ConfigType.LDAP_HOST))
@@ -805,7 +811,9 @@ public class AppResource extends BaseResource {
                     .add("base_dn", ConfigUtil.getConfigStringValue(ConfigType.LDAP_BASE_DN))
                     .add("filter", ConfigUtil.getConfigStringValue(ConfigType.LDAP_FILTER))
                     .add("default_email", ConfigUtil.getConfigStringValue(ConfigType.LDAP_DEFAULT_EMAIL))
-                    .add("default_storage", ConfigUtil.getConfigLongValue(ConfigType.LDAP_DEFAULT_STORAGE));
+                    .add("default_storage", ConfigUtil.getConfigLongValue(ConfigType.LDAP_DEFAULT_STORAGE))
+                    .add("default_groupmembership", ConfigUtil.getConfigStringValue(ConfigType.LDAP_DEFAULT_GROUPMEMBERSHIP))
+                    .add("default_group", sGroupID);
         } else {
             // LDAP disabled
             response.add("enabled", false);
@@ -858,7 +866,9 @@ public class AppResource extends BaseResource {
                                @FormParam("base_dn") String baseDn,
                                @FormParam("filter") String filter,
                                @FormParam("default_email") String defaultEmail,
-                               @FormParam("default_storage") String defaultStorageStr) {
+                               @FormParam("default_storage") String defaultStorageStr,
+                               @FormParam("default_groupmembership") String defaultGroupMemberShipStr,
+                               @FormParam("default_group") String defaultGroupStr) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -882,6 +892,7 @@ public class AppResource extends BaseResource {
             configDao.update(ConfigType.LDAP_ENABLED, Boolean.TRUE.toString());
             configDao.update(ConfigType.LDAP_HOST, host);
             configDao.update(ConfigType.LDAP_PORT, portStr);
+            if( usessl == null ) usessl = false;
             configDao.update(ConfigType.LDAP_USESSL, usessl.toString());
             configDao.update(ConfigType.LDAP_ADMIN_DN, adminDn);
             configDao.update(ConfigType.LDAP_ADMIN_PASSWORD, adminPassword);
@@ -889,6 +900,10 @@ public class AppResource extends BaseResource {
             configDao.update(ConfigType.LDAP_FILTER, filter);
             configDao.update(ConfigType.LDAP_DEFAULT_EMAIL, defaultEmail);
             configDao.update(ConfigType.LDAP_DEFAULT_STORAGE, defaultStorageStr);
+            if( defaultGroupMemberShipStr == null ) defaultGroupMemberShipStr = "";
+            configDao.update(ConfigType.LDAP_DEFAULT_GROUPMEMBERSHIP, defaultGroupMemberShipStr);
+            if( defaultGroupStr == null ) defaultGroupStr = "";
+            configDao.update(ConfigType.LDAP_DEFAULT_GROUP, defaultGroupStr);
         } else {
             // LDAP disabled
             configDao.update(ConfigType.LDAP_ENABLED, Boolean.FALSE.toString());

@@ -85,7 +85,7 @@
     "page_size_30": "每頁30列",
     "upgrade_quota": "如需要擴充檔案容量, 請聯繫管理員",
     "quota": "{{ current | number: 0 }}MB ({{ current | number: 1 }}%) 已使用 {{ total | number: 0 }}MB",
-    "count": "{{ count }} 文件找到",
+    "count": "找到 {{ count }} 份文件",
     "last_updated": "最後更新 {{ date | timeAgo: dateFormat }}",
     "view": {
       "delete_comment_title": "刪除留言",
@@ -295,8 +295,10 @@
       "base_dn": "Base search DN",
       "filter": "過濾 (必須包含 USERNAME, 例如： \"(uid=USERNAME)\")",
       "default_email": "\"EMAIL\"欄位名稱",
-      "default_storage": "\"可用容量\"欄位名稱",
-      "saved": "LDAP 設定成功"
+      "default_storage": "可用容量",
+      "saved": "LDAP 設定成功",
+      "default_group": "預設群組",
+      "default_groupmembership": "\"群組\"欄位名稱"
     },
     "user": {
       "title": "使用者 <small>管理</small>",
@@ -387,7 +389,7 @@
         "group_used_title": "Group in use",
         "group_used_message": "This group is used in the workflow \"{{ name }}\"",
         "edit_group_title": "編輯 <small>\"{{ name }}\"</small>",
-        "add_group_title": "新增 <small>組</small>",
+        "add_group_title": "新增 <small>群組</small>",
         "name": "名稱",
         "parent_group": "上層群組",
         "search_group": "搜尋群組",
@@ -451,13 +453,13 @@
       "username": "IMAP帳號",
       "password": "IMAP密碼",
       "folder": "IMAP資料夾",
-      "tag": "新增標籤至匯入之文件",
+      "tag": "附加標籤",
       "test": "測試參數",
       "last_sync": "上次同步：{{ data.date | date }}，{{data.count}}郵件匯入",
       "test_success": "與收件匣的連線成功（{{ count }} 則）",
       "test_fail": "連接到收件匣時發生錯誤，請檢查參數",
       "saved": "設定成功",
-      "autoTagsEnabled": "郵件標題(1)\"[]\"之間字串識別為文件名稱。(2)\"#\"字串，識別為標籤(系統須先新增)。(3)\"[]\"須在\"#\"之前。",
+      "autoTagsEnabled": "郵件標題(1)\"[]\"中括號之間字，串識別為「文件名稱」。(2)\"#\"井號之後字串，識別為「標籤」(系統須先新增)。(3)\"中括號[]\"須在\"井號#\"之前。",
       "deleteImported": "匯入後從郵件匣中刪除郵件"
     },
     "monitoring": {
@@ -539,7 +541,7 @@
       "Comment": "留言",
       "Document": "文件",
       "File": "文件",
-      "Group": "組",
+      "Group": "群組",
       "Route": "工作流程",
       "RouteModel": "工作流程",
       "Tag": "標籤",
@@ -569,7 +571,7 @@
     "READWRITE": "可寫",
     "WRITE": "可寫",
     "USER": "帳號",
-    "GROUP": "組",
+    "GROUP": "群組",
     "SHARE": "已共享"
   },
   "workflow_type": {

@@ -16,6 +16,17 @@ angular.module('docs').controller('SettingsLdap', function($scope, Restangular, 
     }
   });
 
+  /**
+   * Load groups from server.
+   */
+  $scope.loadGroups = function() {
+    Restangular.one('group').get().then(function(data) {
+      $scope.groups = data.groups;
+    });
+  };
+  
+  $scope.loadGroups();
+  
   // Edit SMTP config
   $scope.saveResult = undefined;
   $scope.save = function () {

@@ -1,5 +1,9 @@
 package com.sismics.docs.rest.resource;
 
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Set;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.sismics.docs.core.constant.AclTargetType;
@@ -24,11 +28,16 @@ import com.sismics.util.JsonUtil;
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObjectBuilder;
-import jakarta.ws.rs.*;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
-import java.text.MessageFormat;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Group REST resources.
@@ -382,8 +391,9 @@ public class GroupResource extends BaseResource {
         List<GroupDto> groupDtoList = groupDao.findByCriteria(new GroupCriteria(), sortCriteria);
         for (GroupDto groupDto : groupDtoList) {
             groups.add(Json.createObjectBuilder()
-                    .add("name", groupDto.getName())
-                    .add("parent", JsonUtil.nullable(groupDto.getParentName())));
+            .add("name", groupDto.getName())
+            .add("id", groupDto.getId())
+            .add("parent", JsonUtil.nullable(groupDto.getParentName())));
         }
         
         JsonObjectBuilder response = Json.createObjectBuilder()

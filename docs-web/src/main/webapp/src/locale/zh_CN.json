@@ -296,7 +296,9 @@
       "filter": "搜索过滤器（必须包含 USERNAME, eg. \"(uid=USERNAME)\")",
       "default_email": "LDAP 用户的默认电子邮件",
       "default_storage": "LDAP 用户的默认存储空间",
-      "saved": "成功保存 LDAP 配置"
+      "saved": "成功保存 LDAP 配置",
+      "default_group": "預設群组",
+      "default_groupmembership": "\"群组\"栏位名"
     },
     "user": {
       "title": "用户 <small>管理</small>",

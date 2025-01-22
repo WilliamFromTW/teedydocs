@@ -1,13 +1,7 @@
 package com.sismics.docs.core.util.authentication;
 
-import com.sismics.docs.core.constant.ConfigType;
-import com.sismics.docs.core.constant.Constants;
-import com.sismics.docs.core.dao.ConfigDao;
-import com.sismics.docs.core.dao.UserDao;
-import com.sismics.docs.core.model.jpa.Config;
-import com.sismics.docs.core.model.jpa.User;
-import com.sismics.docs.core.util.ConfigUtil;
-import com.sismics.util.ClasspathScanner;
+import java.util.UUID;
+
 import org.apache.directory.api.ldap.model.cursor.EntryCursor;
 import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.Entry;
@@ -19,7 +13,16 @@ import org.apache.directory.ldap.client.api.LdapNetworkConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.UUID;
+import com.sismics.docs.core.constant.ConfigType;
+import com.sismics.docs.core.constant.Constants;
+import com.sismics.docs.core.dao.ConfigDao;
+import com.sismics.docs.core.dao.GroupDao;
+import com.sismics.docs.core.dao.UserDao;
+import com.sismics.docs.core.model.jpa.Config;
+import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.model.jpa.UserGroup;
+import com.sismics.docs.core.util.ConfigUtil;
+import com.sismics.util.ClasspathScanner;
 
 /**
  * LDAP authentication handler.
@@ -58,6 +61,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
     public User authenticate(String username, String password) {
         // Fetch and authenticate the user
         Entry userEntry;
+        String sGroupName = null;
         try (LdapConnection ldapConnection = getConnection()) {
             if (ldapConnection == null) {
                 return null;
@@ -69,6 +73,11 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
             if (cursor.next()) {
                 userEntry = cursor.get();
                 ldapConnection.bind(userEntry.getDn(), password);
+                if( ConfigUtil.getConfigStringValue(ConfigType.LDAP_DEFAULT_GROUPMEMBERSHIP )!=null && userEntry.get(  ConfigUtil.getConfigStringValue(ConfigType.LDAP_DEFAULT_GROUPMEMBERSHIP ))!=null){
+                  sGroupName = userEntry.get(  ConfigUtil.getConfigStringValue(ConfigType.LDAP_DEFAULT_GROUPMEMBERSHIP )).getString();
+                  System.out.println( "get groupmembership = "+userEntry.get(  ConfigUtil.getConfigStringValue(ConfigType.LDAP_DEFAULT_GROUPMEMBERSHIP )).getString() );
+                }
+                
             } else {
                 // User not found
                 return null;
@@ -96,7 +105,28 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
             }
             user.setStorageQuota(ConfigUtil.getConfigLongValue(ConfigType.LDAP_DEFAULT_STORAGE));
             try {
-                userDao.create(user, "admin");
+              userDao.create(user, "admin");
+              if( !ConfigUtil.getConfigStringValue( ConfigType.LDAP_DEFAULT_GROUP ).trim().equals("") ){
+                // Add the membership
+                GroupDao groupDao = new GroupDao();
+                UserGroup userGroup = new UserGroup();                
+                userGroup.setGroupId(ConfigUtil.getConfigStringValue( ConfigType.LDAP_DEFAULT_GROUP ));
+                userGroup.setUserId(user.getId());
+                if( groupDao.getActiveById(ConfigUtil.getConfigStringValue( ConfigType.LDAP_DEFAULT_GROUP )) != null )
+                  groupDao.addMember(userGroup);
+              }
+              if( sGroupName!=null ){
+                GroupDao groupDao = new GroupDao();
+                UserGroup userGroup = new UserGroup();                
+                userGroup.setUserId(user.getId());
+                com.sismics.docs.core.model.jpa.Group aGroup = groupDao.getActiveByName(sGroupName);
+                if( aGroup!= null ){
+                  userGroup.setGroupId(aGroup.getId());
+                  groupDao.addMember(userGroup);
+                }
+
+              }
+
             } catch (Exception e) {
                 log.error("Error while creating the internal user", e);
                 return null;
