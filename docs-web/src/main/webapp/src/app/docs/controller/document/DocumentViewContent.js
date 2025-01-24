@@ -167,6 +167,7 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
       $rootScope.userInfo.storage_current += data.size;
     })
     .error(function (data) {
+      newfile.name = $translate.instant('document.default.upload_error_duplicate')
       newfile.status = $translate.instant('document.view.content.upload_error');
       if (data.type === 'QuotaReached') {
         newfile.status += ' - ' + $translate.instant('document.view.content.upload_error_quota');
