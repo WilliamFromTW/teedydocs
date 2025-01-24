@@ -194,7 +194,7 @@ public class FileDao {
      */
     public List<File> getByUserIdFileName(String userId,String name) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        TypedQuery<File> q = em.createQuery("select f from File f where f.userId = :userId and f.name = :name and f.deleteDate is null", File.class);
+        TypedQuery<File> q = em.createQuery("select f from File f where f.userId = :userId and f.name = :name and f.latestVersion = true and f.deleteDate is null", File.class);
         q.setParameter("userId", userId);
         q.setParameter("name", name);
         try {
@@ -259,6 +259,22 @@ public class FileDao {
             return getByDocumentsIds(Collections.singleton(documentId));
         }
     }
+
+    /**
+     * Get files by document ID or all orphan files of a user.
+     * 
+     * @param userId User ID
+     * @param documentId Document ID
+     * @return List of files
+     */
+    public List<File> getAllByUserIdAndDocumentId(String userId, String documentId) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+            TypedQuery<File> q = em.createQuery("select f from File f where f.documentId = :documentId and f.userId = :userId ", File.class);
+            q.setParameter("documentId", documentId);
+            q.setParameter("userId", userId);
+            return q.getResultList();
+    }
+
 
     /**
      * Get files by documents IDs.

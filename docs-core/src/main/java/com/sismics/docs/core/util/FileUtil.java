@@ -100,6 +100,7 @@ public class FileUtil {
        aFile.setDocumentId(event.getDucumentId());
        aFile.setUserId(event.getUserId());
        aFile.setName(event.getFileName());
+       aFile.setSize(event.getFileSize());
        delete(aFile);
     }
     /**
@@ -136,12 +137,10 @@ public class FileUtil {
               thumbnailFile.toFile().renameTo(aDestFile.toFile());  
             }
         }
-       
         Files.delete(DirectoryUtil.getStorageDirectory(file));
         
 }
 
-    
     /**
      * Create a new file.
      *
@@ -194,7 +193,7 @@ public class FileUtil {
 
         // Get files of this document
         FileDao fileDao = new FileDao();
-        if( !ConfigUtil.canFileDuplicate() ){
+        if( !ConfigUtil.canFileDuplicate() && previousFileId==null ){
             if(fileDao.getByUserIdFileName(userId,StringUtils.abbreviate(name, 200))!=null){
                 throw new IOException("FileNameDuplicate");
             }

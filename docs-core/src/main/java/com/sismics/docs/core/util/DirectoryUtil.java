@@ -80,9 +80,9 @@ public class DirectoryUtil {
             return getDataSubDirectory("storage"+"/"+file.getUserId()+"/"+file.getId());
           else{
             if(  file.getDocumentId()==null || file.getDocumentId().trim().equals("") )
-              return getDataSubDirectory("storage"+"/"+file.getUserId());
+              return getDataSubDirectory("storage"+"/"+file.getUserId()+"/"+file.getId());
             else{
-              return getDataSubDirectory("storage"+"/"+file.getUserId()+"/"+ file.getDocumentId());
+              return getDataSubDirectory("storage"+"/"+file.getUserId()+"/"+ file.getDocumentId()+"/"+file.getId());
             }
           }
         }
@@ -90,15 +90,19 @@ public class DirectoryUtil {
           return getDataSubDirectory("storage");
     }
 
-  
     /**
      * Returns the deleted storage directory.
      * 
      * @return Storage directory.
      */
     public static Path getDeleteStorageDirectory(File file) {
-        if( !ConfigUtil.isFileEncrypt() && file!=null)
-          return getDataSubDirectory("delete/storage"+"/"+file.getUserId()+"/"+file.getId());
+        if( !ConfigUtil.isFileEncrypt() && file!=null){
+          if(  file.getDocumentId()==null || file.getDocumentId().trim().equals("") )
+            return getDataSubDirectory("delete/storage"+"/"+file.getUserId()+"/"+file.getId());
+          else{
+            return getDataSubDirectory("delete/storage"+"/"+file.getUserId()+"/"+ file.getDocumentId()+"/"+file.getId());
+          }
+        }        
         else
           return getDataSubDirectory("delete/storage");
     }
