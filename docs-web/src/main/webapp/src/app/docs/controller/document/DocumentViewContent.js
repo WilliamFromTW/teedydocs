@@ -51,6 +51,23 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
   $scope.loadFiles();
 
   /**
+   * Returns a promise for typeahead title.
+   */
+  $scope.getTitleTypeahead = function($viewValue) {
+    var deferred = $q.defer();
+    Restangular.one('document/list')
+    .get({
+      limit: 5,
+      sort_column: 1,
+      asc: true,
+      search: $viewValue
+    }).then(function(data) {
+      deferred.resolve(_.uniq(_.pluck(data.documents, 'title'), true));
+    });
+    return deferred.promise;
+  };
+  
+  /**
    * Navigate to the selected file.
    */
   $scope.openFile = function (file, $event) {
@@ -78,6 +95,8 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
           $rootScope.userInfo.storage_current -= file.size;
 
           // Update local data
+          $scope.viewDocument(file.document_id);
+          $scope.loadDocuments();
           $scope.loadFiles();
         });
       }
@@ -165,6 +184,10 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
 
       // New file uploaded, increase used quota
       $rootScope.userInfo.storage_current += data.size;
+      $scope.viewDocument(file.document_id);
+      $scope.loadDocuments();
+      $scope.loadFiles();
+
     })
     .error(function (data) {
       newfile.name = $translate.instant('document.default.upload_error_duplicate')
@@ -180,7 +203,10 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
   /**
    * Rename a file.
    */
-  $scope.renameFile = function (file) {
+  $scope.renameFile = function (file,title) {
+    file.document_title = title;
+    file.new_document_title = title;
+    file.new_document_id = file.document_id;
     $uibModal.open({
       templateUrl: 'partial/docs/file.rename.html',
       controller: 'FileRename',
@@ -193,11 +219,23 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
       if (fileUpdated === null) {
         return;
       }
-
+      if( fileUpdated.new_document_id===fileUpdated.document_id ){
+        if( fileUpdated.new_document_title!=fileUpdated.document_title ){
+          fileUpdated.new_document_title = $translate.instant('file.edit.document_name_error');
+          return;
+        }
+      }
       // Rename the file
       Restangular.one('file/' + file.id).post('', {
-        name: fileUpdated.name
+        name: fileUpdated.name,
+        document_id: fileUpdated.new_document_id
       }).then(function () {
+        if( fileUpdated.new_document_id!=fileUpdated.document_id ){
+          $scope.viewDocument(fileUpdated.new_document_id);
+          $scope.loadDocuments();
+          $scope.loadFiles();
+//            $state.go('document.default');  
+        }else
         file.name = fileUpdated.name;
       },function(error){
         file.name = $translate.instant('document.edit.rename_error');

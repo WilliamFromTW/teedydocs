@@ -41,7 +41,6 @@ import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.RestUtil;
 import com.sismics.rest.util.ValidationUtil;
-import com.sismics.util.HttpUtil;
 import com.sismics.util.JsonUtil;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.mime.MimeType;
@@ -266,6 +265,8 @@ public class FileResource extends BaseResource {
         return Response.ok().entity(response.build()).build();
     }
 
+
+
     /**
      * Update a file.
      *
@@ -273,7 +274,8 @@ public class FileResource extends BaseResource {
      * @apiName PostFile
      * @apiGroup File
      * @apiParam {String} id File ID
-     * @apiParam {String} name Name
+     * @apiParam {String} name Name required
+     * @apiParam {String} name document_id optional
      * @apiSuccess {String} status Status OK
      * @apiError (client) ForbiddenError Access denied
      * @apiError (client) ValidationError Validation error
@@ -286,41 +288,52 @@ public class FileResource extends BaseResource {
     @POST
     @Path("{id: [a-z0-9\\-]+}")
     public Response update(@PathParam("id") String id,
-                           @FormParam("name") String name) {
+                           @FormParam("name") String name,
+                           @FormParam("document_id") String document_id) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
 
         // Get the file
         File file = findFile(id, null);
-
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 200, false);
 
         FileDao fileDao = new FileDao();
+        boolean bNameNeedToUpdate = true;
+
         if( !ConfigUtil.canFileDuplicate() ){
-          if(fileDao.getByUserIdFileName(file.getUserId(),StringUtils.abbreviate(name, 200))!=null){
-            //throw new ClientException(e.getMessage(), e.getMessage(), e);
-            JsonObjectBuilder response = Json.createObjectBuilder()
-            .add("status", "FileError")
-            .add("type", "FileNameDuplicate")
-            .add("message", "UserID="+file.getUserId()+",name="+name);
-            return Response.status(403).entity(response.build()).build();
+          List<File> aCheckFile = fileDao.getByUserIdFileName(file.getUserId(),StringUtils.abbreviate(name, 200));
+          if(aCheckFile!=null){
+            if( aCheckFile.size()==1){
+                File aSingleFile = (File)aCheckFile.get(0);
+              if( aSingleFile.getName().equals(name) && aSingleFile.getId().equals(id))
+                bNameNeedToUpdate = false;
+            }
+            if(bNameNeedToUpdate){
+              //throw new ClientException(e.getMessage(), e.getMessage(), e);
+              JsonObjectBuilder response = Json.createObjectBuilder()
+              .add("status", "FileError")
+              .add("type", "FileNameDuplicate")
+              .add("message", "UserID="+file.getUserId()+",name="+name);
+              return Response.status(403).entity(response.build()).build();
+            }
           }
         }
 
         // file rename 
         java.nio.file.Path aOriFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName());
+        java.nio.file.Path aOriWebFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName()+"_web");
+        java.nio.file.Path aOriThumbFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName()+"_thumb");
+        if( document_id!=null)
+          file.setDocumentId(document_id);
         java.nio.file.Path aDestFile = DirectoryUtil.getStorageDirectory(file).resolve(name);
-        aOriFile.toFile().renameTo(aDestFile.toFile());
+        java.nio.file.Path aDestWebFile = DirectoryUtil.getStorageDirectory(file).resolve(name+"_web");
+        java.nio.file.Path aDestThumbFile = DirectoryUtil.getStorageDirectory(file).resolve(name+"_thumb");
 
-        aOriFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName()+"_web");
-        aDestFile = DirectoryUtil.getStorageDirectory(file).resolve(name+"_web");
         aOriFile.toFile().renameTo(aDestFile.toFile());
-
-        aOriFile = DirectoryUtil.getStorageDirectory(file).resolve(file.getName()+"_thumb");
-        aDestFile = DirectoryUtil.getStorageDirectory(file).resolve(name+"_thumb");
-        aOriFile.toFile().renameTo(aDestFile.toFile());
+        aOriWebFile.toFile().renameTo(aDestWebFile.toFile());
+        aOriThumbFile.toFile().renameTo(aDestThumbFile.toFile());
 
         // Update the file
         file.setName(name);
@@ -707,17 +720,10 @@ public class FileResource extends BaseResource {
         }
 
         Response.ResponseBuilder builder = Response.ok(stream)
+                .header(HttpHeaders.CACHE_CONTROL, "no-store, no-cache")
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename*=utf-8''" + filenameEncode(  file.getFullName("data") ))
-                .header(HttpHeaders.CONTENT_TYPE, mimeType);
-        if (decrypt) {
-            // Cache real files
-            builder.header(HttpHeaders.CACHE_CONTROL, "private")
-                    .header(HttpHeaders.EXPIRES, HttpUtil.buildExpiresHeader(3_600_000L * 24L * 365L));
-        } else {
-            // Do not cache the temporary thumbnail
-            builder.header(HttpHeaders.CACHE_CONTROL, "no-store, must-revalidate")
-                    .header(HttpHeaders.EXPIRES, "0");
-        }
+                .header(HttpHeaders.CONTENT_TYPE, mimeType)
+                .header(HttpHeaders.EXPIRES, "0");
         return builder.build();
     }
 

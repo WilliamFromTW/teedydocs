@@ -99,7 +99,7 @@
                 </li>
                 <li role="separator" class="divider"></li>
                 <li>
-                  <a href ng-click="renameFile(file)">
+                  <a href ng-click="renameFile(file,document.title)">
                     <span class="fas fa-pencil-alt"></span>
                     {{ 'rename' | translate }}
                   </a>
@@ -191,7 +191,7 @@
             </li>
             <li role="separator" class="divider"></li>
             <li>
-              <a href ng-click="renameFile(file)">
+              <a href ng-click="renameFile(file,document.title)">
                 <span class="fas fa-pencil-alt"></span>
                 {{ 'rename' | translate }}
               </a>

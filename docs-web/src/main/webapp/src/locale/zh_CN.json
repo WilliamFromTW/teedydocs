@@ -209,7 +209,9 @@
     },
     "edit": {
       "title": "编辑档案",
-      "name": "文档名称"
+      "name": "文档名称",
+      "document_name":"更改所属文件名称",
+      "document_name_error":"失败!请重新输入，并选择系统弹出之文件列表"
     },
     "versions": {
       "title": "历史版本",

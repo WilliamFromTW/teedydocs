@@ -3,14 +3,32 @@
 </div>
 <form name="fileForm" novalidate>
   <div class="modal-body">
+    <label class="col-sm-2 control-label">{{ 'file.edit.name' | translate }}</label>
+    <div class="col-sm-10">
     <input type="text" name="name" ng-attr-placeholder="{{ 'file.edit.name' | translate }}" class="form-control"
            ng-maxlength="200" required ng-model="file.name">
     <span class="text-danger" ng-show="fileForm.name.$error.maxlength && fileForm.$dirty">{{ 'validation.too_long' | translate }}</span>
+    </div>
+  </div>
+  <div class="modal-body" >
+    <label class="col-sm-2 control-label" for="inputTitle">{{ 'file.edit.document_name' | translate }}</label>
+    <div class="col-sm-10">
+      <input required ng-maxlength="100" class="form-control" type="text" id="inputTitle"
+        ng-attr-placeholder="{{ 'document.edit.title_placeholder' | translate }}" name="title" ng-model="file.new_document_title" autocomplete="off"
+        uib-typeahead="document for document in getTitleTypeahead($viewValue)"
+        typeahead-template-url="partial/docs/directive.rename.typeahead.html"
+        typeahead-wait-ms="200"   typeahead-on-select="addDocument($item)"/>
+        <input  class="form-control" type="hidden" name="new_document_id" ng-model="file.new_document_id" id="inputId">
+    </div>
+  </div>
+  <div class="well-sm text-danger" >
+    <span ng-bind="file.error"></span>
   </div>
   <div class="modal-footer">
-    <button ng-click="close(file)" ng-disabled="!fileForm.$valid" class="btn btn-primary">
+    <button ng-click="close(file)"  class="btn btn-primary">
       <span class="fas fa-pencil-alt"></span> {{ 'save' | translate }}
     </button>
     <button ng-click="close(null)" class="btn btn-default">{{ 'cancel' | translate }}</button>
   </div>
+  
 </form>

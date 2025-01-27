@@ -150,12 +150,15 @@ public class FileDao {
      */
     public File update(File file) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        
-        // Get the file
+
         TypedQuery<File> q = em.createQuery("select f from File f where f.id = :id and f.deleteDate is null", File.class);
         q.setParameter("id", file.getId());
         File fileDb = q.getSingleResult();
-
+        String sDocumentId = fileDb.getDocumentId();
+        if( !sDocumentId.equals(file.getDocumentId())){
+           em.createNativeQuery("update t_file set fil_iddoc_c='"+file.getDocumentId()+"' where fil_iddoc_c='"+sDocumentId+"'");
+        }
+        
         // Update the file
         fileDb.setDocumentId(file.getDocumentId());
         fileDb.setName(file.getName());
@@ -165,7 +168,6 @@ public class FileDao {
         fileDb.setVersionId(file.getVersionId());
         fileDb.setLatestVersion(file.isLatestVersion());
         fileDb.setSize(file.getSize());
-
         return file;
     }
 

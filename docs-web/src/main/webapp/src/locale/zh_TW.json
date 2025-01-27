@@ -110,7 +110,7 @@
       "content": {
         "content": "內容",
         "delete_file_title": "刪除檔案",
-        "delete_file_message": "您是否確認刪除此檔案?",
+        "delete_file_message": "確定刪除此檔案?",
         "upload_pending": "等待中...",
         "upload_progress": "上傳中...",
         "upload_error": "上傳失敗",
@@ -209,7 +209,9 @@
     },
     "edit": {
       "title": "編輯檔案",
-      "name": "檔案名稱"
+      "name": "檔案名稱",
+      "document_name":"更改所屬文件名稱",
+      "document_name_error":"失敗!請重新輸入，並選擇系統彈出之文件列表"
     },
     "versions": {
       "title": "版本歷史",

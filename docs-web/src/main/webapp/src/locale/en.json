@@ -209,7 +209,9 @@
     },
     "edit": {
       "title": "Edit file",
-      "name": "Filename"
+      "name": "Filename",
+      "document_name":"Change Document file belongs",
+      "document_name_error":"Failed! Please select the document name that pops up when entering"
     },
     "versions": {
       "title": "Version history",

@@ -86,6 +86,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.StreamingOutput;
 
@@ -352,8 +353,19 @@ public class DocumentResource extends BaseResource {
 
         return Response.ok(stream)
                 .header("Content-Type", MimeType.APPLICATION_PDF)
-                .header("Content-Disposition", "inline; filename=\"" + documentDto.getTitle() + ".pdf\"")
+                .header(HttpHeaders.CACHE_CONTROL, "no-store, no-cache")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename*=utf-8''" + filenameEncode( documentDto.getTitle() ))
+                .header(HttpHeaders.EXPIRES, "0")
                 .build();
+    }
+
+    private String filenameEncode(String name) {
+        try {
+            return java.net.URLEncoder.encode(name, "UTF-8").replace("+", "%20");
+        } catch (java.io.UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return name;
+        }
     }
 
     /**
