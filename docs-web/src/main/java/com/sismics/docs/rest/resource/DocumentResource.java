@@ -26,6 +26,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.google.common.collect.Lists;
 import com.sismics.docs.core.constant.AclType;
+import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.constant.PermType;
@@ -53,6 +54,7 @@ import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.util.AuditLogUtil;
 import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.util.DocumentUtil;
 import com.sismics.docs.core.util.FileUtil;
@@ -340,6 +342,7 @@ public class DocumentResource extends BaseResource {
             // Store its private key to decrypt it
             User user = userDao.getById(file.getUserId());
             file.setPrivateKey(user.getPrivateKey());
+            AuditLogUtil.create(file, AuditLogType.DOWNLOAD, user.getId());
         }
 
         // Convert to PDF
@@ -351,10 +354,11 @@ public class DocumentResource extends BaseResource {
             }
         };
 
+
         return Response.ok(stream)
                 .header("Content-Type", MimeType.APPLICATION_PDF)
                 .header(HttpHeaders.CACHE_CONTROL, "no-store, no-cache")
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename*=utf-8''" + filenameEncode( documentDto.getTitle() ))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename*=utf-8''" + filenameEncode( documentDto.getTitle() + ".pdf" ))
                 .header(HttpHeaders.EXPIRES, "0")
                 .build();
     }

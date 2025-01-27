@@ -539,6 +539,7 @@
       "log_created": "created",
       "log_updated": "updated",
       "log_deleted": "deleted",
+      "log_download": "read",
       "Acl": "ACL",
       "Comment": "Comment",
       "Document": "Document",

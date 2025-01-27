@@ -20,6 +20,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
+import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.AclDao;
 import com.sismics.docs.core.dao.DocumentDao;
@@ -719,11 +720,15 @@ public class FileResource extends BaseResource {
             return Response.status(Status.SERVICE_UNAVAILABLE).build();
         }
 
+        if (size == null) {
+            com.sismics.docs.core.util.AuditLogUtil.create(file, AuditLogType.DOWNLOAD, user.getId());
+        }
+
         Response.ResponseBuilder builder = Response.ok(stream)
                 .header(HttpHeaders.CACHE_CONTROL, "no-store, no-cache")
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename*=utf-8''" + filenameEncode(  file.getFullName("data") ))
                 .header(HttpHeaders.CONTENT_TYPE, mimeType)
-                .header(HttpHeaders.EXPIRES, "0");
+                .header(HttpHeaders.EXPIRES, "0");                
         return builder.build();
     }
 
@@ -829,15 +834,19 @@ public class FileResource extends BaseResource {
                         throw new WebApplicationException(e);
                     }
                     index++;
+                    com.sismics.docs.core.util.AuditLogUtil.create(file, AuditLogType.DOWNLOAD, user.getId());
                 }
             }
             outputStream.close();
         };
-        
+
+
         // Write to the output
-        return Response.ok(stream)
+        return Response.ok(stream)                
+                .header(HttpHeaders.CACHE_CONTROL, "no-store, no-cache")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=utf-8''" + filenameEncode(  zipFileName + ".zip\"" ))
+                .header(HttpHeaders.EXPIRES, "0")
                 .header("Content-Type", "application/zip")
-                .header("Content-Disposition", "attachment; filename=\"" + zipFileName + ".zip\"")
                 .build();
     }
 

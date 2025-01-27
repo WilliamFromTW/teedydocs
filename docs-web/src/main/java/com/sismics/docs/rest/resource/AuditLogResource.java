@@ -43,7 +43,7 @@ public class AuditLogResource extends BaseResource {
      * @apiSuccess {String} logs.username Username
      * @apiSuccess {String} logs.target Entity ID
      * @apiSuccess {String="Acl","Comment","Document","File","Group","Tag","User","RouteModel","Route"} logs.class Entity type
-     * @apiSuccess {String="CREATE","UPDATE","DELETE"} logs.type Type
+     * @apiSuccess {String="CREATE","UPDATE","DELETE","DOWNLOAD"} logs.type Type
      * @apiSuccess {String} logs.message Message
      * @apiSuccess {Number} logs.create_date Create date (timestamp)
      * @apiError (client) ForbiddenError Access denied

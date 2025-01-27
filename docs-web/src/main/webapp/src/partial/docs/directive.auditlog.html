@@ -8,12 +8,13 @@
       </a>
     </td>
     <td class="va-middle">
-      <span ng-class="{ 'text-danger': log.type == 'DELETE', 'text-info': log.type == 'UPDATE', 'text-success': log.type == 'CREATE' }">
+      <span ng-class="{ 'text-danger': log.type == 'DELETE', 'text-info': log.type == 'UPDATE', 'text-success': log.type == 'CREATE', 'text-info': log.type == 'DOWNLOAD' }">
         {{ 'directive.auditlog.' + log.class | translate }}
         <span ng-switch="log.type">
           <span ng-switch-when="CREATE">{{ 'directive.auditlog.log_created' | translate }}</span>
           <span ng-switch-when="UPDATE">{{ 'directive.auditlog.log_updated' | translate }}</span>
           <span ng-switch-when="DELETE">{{ 'directive.auditlog.log_deleted' | translate }}</span>
+          <span ng-switch-when="DOWNLOAD">{{ 'directive.auditlog.log_download' | translate }}</span>
         </span>
         :
       </span>

@@ -539,6 +539,7 @@
       "log_created": "创建",
       "log_updated": "更新",
       "log_deleted": "删除",
+      "log_download": "读取",
       "Acl": "ACL",
       "Comment": "评论",
       "Document": "文档",

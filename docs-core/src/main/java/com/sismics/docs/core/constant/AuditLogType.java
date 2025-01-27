@@ -19,5 +19,11 @@ public enum AuditLogType {
     /**
      * Delete.
      */
-    DELETE
+    DELETE,
+
+    /**
+     * Download.
+     */
+    DOWNLOAD
+
 }

@@ -67,7 +67,7 @@
     "current_step_name": "當前步驟",
     "title": "文件名稱",
     "description": "說明",
-    "contributors": "貢獻者",
+    "contributors": "投稿者",
     "language": "語言",
     "creation_date": "建立時間",
     "subject": "主旨",
@@ -85,7 +85,7 @@
     "page_size_30": "每頁30列",
     "upgrade_quota": "如需要擴充檔案容量, 請聯繫管理員",
     "quota": "{{ current | number: 0 }}MB ({{ current | number: 1 }}%) 已使用 {{ total | number: 0 }}MB",
-    "count": "找到 {{ count }} 份文件",
+    "count": "有 {{ count }} 份文件",
     "last_updated": "最後更新 {{ date | timeAgo: dateFormat }}",
     "view": {
       "delete_comment_title": "刪除留言",
@@ -539,6 +539,7 @@
       "log_created": "建立",
       "log_updated": "更新",
       "log_deleted": "删除",
+      "log_download": "讀取",
       "Acl": "ACL",
       "Comment": "留言",
       "Document": "文件",
@@ -569,9 +570,9 @@
     }
   },
   "acl": {
-    "READ": "可讀",
-    "READWRITE": "可寫",
-    "WRITE": "可寫",
+    "READ": "唯讀",
+    "READWRITE": "讀寫",
+    "WRITE": "修改",
     "USER": "帳號",
     "GROUP": "群組",
     "SHARE": "已共享"
