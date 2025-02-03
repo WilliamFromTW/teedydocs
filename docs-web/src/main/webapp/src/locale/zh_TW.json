@@ -447,7 +447,7 @@
     },
     "inbox": {
       "title": "掃描收件匣",
-      "message": "啟用此功能，系統將定期掃描收件匣中新的電子郵件並自動匯入。",
+      "message": "啟用此功能，系統將定期掃描收件匣中新的電子郵件並自動匯入附件。",
       "enabled": "啟用收件匣掃描功能",
       "hostname": "IMAP主機名稱",
       "port": "IMAP埠（143或993）",
@@ -461,7 +461,8 @@
       "test_success": "與收件匣的連線成功（{{ count }} 則）",
       "test_fail": "連接到收件匣時發生錯誤，請檢查參數",
       "saved": "設定成功",
-      "autoTagsEnabled": "郵件標題(1)\"[]\"中間字串，為「文件名稱」。(2)\"#\"後面字串，為「標籤」。",
+      "autoTagsEnabled": "郵件標題",
+      "autoTagsEnabledDesc": "例如 [MyDoc]，系統將建立文件：MyDoc。#資訊部，將建立標籤：資訊部",
       "deleteImported": "匯入後從郵件匣中刪除郵件"
     },
     "monitoring": {
@@ -571,7 +572,7 @@
   },
   "acl": {
     "READ": "唯讀",
-    "READWRITE": "讀寫",
+    "READWRITE": "修改",
     "WRITE": "修改",
     "USER": "帳號",
     "GROUP": "群組",

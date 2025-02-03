@@ -462,6 +462,7 @@
       "test_fail": "连接到收件箱时发生错误，请检查参数",
       "saved": "IMAP 配置保存成功",
       "autoTagsEnabled": "从标有 # 的主题行自动添加标签",
+      "autoTagsEnabledDesc": "例如 [MyDoc]，系统将建立文件：MyDoc。 #资讯部，将建立标签：资讯部",
       "deleteImported": "导入后从邮箱中删除邮件"
     },
     "monitoring": {

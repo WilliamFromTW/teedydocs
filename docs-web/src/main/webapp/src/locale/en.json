@@ -462,6 +462,7 @@
       "test_fail": "An error occurred while connecting to the inbox, please check the parameters",
       "saved": "IMAP configuration saved successfully",
       "autoTagsEnabled": "Automatically add tags from subject line marked with #",
+      "autoTagsEnabledDesc": "e.g.[MyDoc],will create a document: MyDoc. #IT, will create a Tag: IT",
       "deleteImported": "Delete message from mailbox after import"
     },
     "monitoring": {
