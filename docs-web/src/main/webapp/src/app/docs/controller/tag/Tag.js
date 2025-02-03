@@ -3,7 +3,7 @@
 /**
  * Tag controller.
  */
-angular.module('docs').controller('Tag', function($scope, Restangular) {
+angular.module('docs').controller('Tag', function($scope,$rootScope, Restangular) {
   $scope.tag = { name: '', color: '#3a87ad' };
 
   // Retrieve tags
@@ -11,6 +11,11 @@ angular.module('docs').controller('Tag', function($scope, Restangular) {
   $scope.loadTags = function() {
     Restangular.one('tag/list').get().then(function(data) {
       $scope.tags = data.tags;
+      $scope.showAddTag = false;
+      $rootScope.userInfo.groups.forEach(function(value){
+        if( value==='administrators')
+            $scope.showAddTag = true;
+      });     
     });
   };
   $scope.loadTags();

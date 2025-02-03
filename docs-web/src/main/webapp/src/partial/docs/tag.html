@@ -13,7 +13,7 @@
 <div class="row">
   <div class="col-md-4">
     <div class="well well-3d">
-      <form class="form-inline text-center" name="tagForm" novalidate>
+      <form ng-if="showAddTag" class="form-inline text-center" name="tagForm" novalidate>
         <div class="input-group" ng-class="{ 'has-error': !tagForm.color.$valid && tagForm.$dirty }">
           <span colorpicker class="input-group-addon btn btn-default" data-color="#3a87ad" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
           <input type="text" name="color" class="form-control" ng-maxlength="7" ng-model="tag.color" ng-show="hexaField">
